@@ -8,6 +8,7 @@ flask = "*"
 flask-restx = "*"
 flask-sqlalchemy = "*"
 python-decouple = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 
