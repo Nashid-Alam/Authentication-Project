@@ -26,6 +26,12 @@ class login(db.Model):
     username=db.Column(db.String(500))
     password=db.Column(db.String(500))
 
+    def __init__(self,first_name,last_name,username,password):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.username = username
+        self.password = password
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -40,6 +46,10 @@ def submit():
 
         print(first_name,last_name,username,password)
 
+    if db.session.query(login)!='':
+        data = login(first_name,last_name,username,password)
+        db.session.add(data)
+        db.session.commit()
         return render_template('success.html')
 
 
