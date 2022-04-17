@@ -1,7 +1,30 @@
-import re
+
 from flask import Flask,render_template,request
+from flask_sqlalchemy import SQLAlchemy
+
 
 app = Flask (__name__)
+
+ENV = 'dev'
+
+if ENV == 'dev':
+    app.debug =True
+    app.config ['SQLALCHEMY_DATABASE_URI']= 'postgresql://localhost/login'
+else:
+    app.debug =False
+    app.config ['SQLALCHEMY_DATABASE_URI']= ''
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
+
+db=SQLAlchemy(app)
+
+class login(db.Model):
+    __tablename__= 'User'
+    id = db.Column(db.Integer,primary_key=True)
+    first_name = db.Column(db.String(500))
+    last_name=db.Column(db.String(500))
+    username=db.Column(db.String(500))
+    password=db.Column(db.String(500))
 
 @app.route('/')
 def index():
@@ -22,5 +45,5 @@ def submit():
 
 
 if __name__ == '__main__':
-    app.debug =True
+    
     app.run()
