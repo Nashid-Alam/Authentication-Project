@@ -1,40 +1,27 @@
-import json
-from flask import Flask, request, Response
-from flask_sqlalchemy import SQLAlchemy
-from api.users import users_bp
+from flask import Flask
+from flask_cors import CORS
+from flask_migrate import Migrate
+from flask_restful import Api
+from resources.user import Users, SingleUser
+from models.db import db
+
+
 
 
 app = Flask(__name__)
-app.register_blueprint(users_bp)
+CORS(app)
+api = Api(app)
+db.init_app(app)
+migrate = Migrate(app, db)
 
-ENV = 'dev'
 
-if ENV == 'dev':
-    app.debug = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/login'
-else:
-    app.debug = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = ''
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost:5432/flask_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ECHO'] = True
 
-db = SQLAlchemy(app)
-
-class User(db.Model):
-    __tablename__ = 'User'
-    id = db.Column(db.Integer, primary_key=True)    
-    username = db.Column(db.String(255))
-    password = db.Column(db.String(255))
-
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
-
-@app.route('/', methods=['GET'])
-def index():
-    return Response('Hello World', status=200)
+api.add_resource(Users, '/users')
+api.add_resource(SingleUser, '/users/<int:id>')
 
 
 if __name__ == '__main__':
-    
-    app.run()
+    app.run(debug=True)
